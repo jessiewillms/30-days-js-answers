@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+
+<div class="selct-menu-wrap">
+	<!-- <h2>pick an globalCompositeOperation</h2> -->
+	<select name="Pick globalCompositeOperation" id="pick_composit" onchange="slect_menu_change()"">
+		<option value="disabled">Select an option</option>
+		<option value="screen">screen</option>
+		<option value="overlay">overlay</option>
+		<option value="darken">darken</option>
+		<option value="color-dodge">color-dodge</option>
+	</select>
+	<div id="msg"></div>
+</div>
+
+<canvas id="draw" width="800" height="800"></canvas>
+
+<script>
+
+	// On change handler for the option menu
+	var get_global_composite = "";
+	function slect_menu_change() {
+		get_global_composite = document.getElementById('pick_composit').value;
+		get_context.globalCompositeOperation = get_global_composite;
+		// console.log(get_global_composite);
+		// 
+		document.querySelector('#pick_composit').disabled = true;
+		document.querySelector('#msg').innerHTML = 'Refresh to pick new option';
+	}
+
+	// Get canvas + get the context of the canvas
+	const get_canvas = document.querySelector('#draw');
+	const get_context = get_canvas.getContext('2d');
+
+	// Adjust the width and height of the canvas
+	get_canvas.width = window.innerWidth;
+	get_canvas.height = window.innerHeight - 100;
+
+	// Base settings for canvas element
+	get_context.strokeStyle = '#483D8B';
+	get_context.lineJoin = 'round'; // where line ends
+	get_context.lineCap = 'round'; // where lines join together
+	get_context.lineWidth = 0; // size of line
+
+	console.log(get_global_composite);
+
+
+	// Dummy variables
+	let is_drawing = false; // when click down on the element; a flag for drawing; should we drag to the canvas
+	let last_x = 0; //helpers; 
+	let last_y = 0; //helpers; 
+	let hue = 0;
+	let direction = true; // building up
+
+
+	function draw(e) {
+		
+		if (!is_drawing) return; // stop function when not mouse down
+		// !! only runs when the mouse is *down* 
+		// b/c of all the listeners below
+		// console.log(e); 
+		console.log(get_global_composite);
+
+		get_context.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+
+		get_context.beginPath(); // start path
+
+		// * Line drawing STARTS FROM:
+		get_context.moveTo(last_x, last_y);
+		
+		// * Line drawing GOES TO:
+		get_context.lineTo(e.offsetX, e.offsetY);
+		get_context.stroke();
+
+		[last_x, last_y] = [e.offsetX, e.offsetY]; // update X + Y values
+
+		// update HSL
+		hue++;
+		if (hue >= 360) {
+			hue = 0;
+		}
+		
+		if (get_context.lineWidth >= 100 || get_context.lineWidth <= 1) {
+			direction = !direction;
+		}
+
+		if (direction) {
+			get_context.lineWidth++;
+		} else {
+			get_context.lineWidth--;
+		}
+	}
+
+	get_canvas.addEventListener('mousemove', draw); // call function when mouse moves
+	
+	// when clicking down 
+	get_canvas.addEventListener('mousedown', (e) => {
+		is_drawing = true;
+		[last_x, last_y] = [e.offsetX, e.offsetY]; // update X + Y values
+	}); 
+
+	get_canvas.addEventListener('mouseup', () => is_drawing = false); // release
+	get_canvas.addEventListener('mouseout', () => is_drawing = false); // outside window
+
+</script>
+
+<style>
+  html, body {
+    margin:0;
+  }
+  canvas {
+  	border: 1px solid grey;
+  }
+  #draw {
+  	margin-top: 25px;
+  }
+  .selct-menu-wrap {
+  	height: 50px;
+  }
+</style>
+
+</body>
+</html>
