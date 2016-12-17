@@ -8,7 +8,7 @@
 
 <div class="selct-menu-wrap">
 	<!-- <h2>pick an globalCompositeOperation</h2> -->
-	<select name="Pick globalCompositeOperation" id="pick_composit" onchange="slect_menu_change()"">
+	<select name="Pick globalCompositeOperation" id="pick_composit" onchange="slect_menu_change(event)"">
 		<option value="disabled">Select an option</option>
 		<option value="screen">screen</option>
 		<option value="overlay">overlay</option>
@@ -23,12 +23,10 @@
 <script>
 
 	// On change handler for the option menu
-	var get_global_composite = "";
-	function slect_menu_change() {
-		get_global_composite = document.getElementById('pick_composit').value;
-		get_context.globalCompositeOperation = get_global_composite;
-		// console.log(get_global_composite);
-		// 
+	// var get_global_composite = "";
+	function slect_menu_change(event) {
+		event.preventDefault();
+		get_context.globalCompositeOperation = document.getElementById('pick_composit').value;
 		document.querySelector('#pick_composit').disabled = true;
 		document.querySelector('#msg').innerHTML = 'Refresh to pick new option';
 	}
@@ -47,7 +45,7 @@
 	get_context.lineCap = 'round'; // where lines join together
 	get_context.lineWidth = 0; // size of line
 
-	console.log(get_global_composite);
+	// console.log(get_global_composite);
 
 
 	// Dummy variables
@@ -63,8 +61,6 @@
 		if (!is_drawing) return; // stop function when not mouse down
 		// !! only runs when the mouse is *down* 
 		// b/c of all the listeners below
-		// console.log(e); 
-		console.log(get_global_composite);
 
 		get_context.strokeStyle = `hsl(${hue}, 100%, 50%)`;
 
